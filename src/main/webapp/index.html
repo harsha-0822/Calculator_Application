@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Glass Calculator</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated glowing orbs */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 25% 50%, rgba(120, 180, 220, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(160, 140, 200, 0.08) 0%, transparent 50%);
+      animation: moveGradient 15s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes moveGradient {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(50px, 50px);
+      }
+    }
+
+    .glass-container {
+      position: relative;
+      width: 420px;
+      padding: 35px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        0 0 80px rgba(120, 180, 220, 0.08),
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.25),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+      animation: fadeUp 0.8s ease-out;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      background: linear-gradient(135deg, #c5d9f1, #e0e8f5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    #display {
+      width: 100%;
+      height: 70px;
+      background: rgba(20, 20, 45, 0.6);
+      border: 1px solid rgba(200, 210, 230, 0.15);
+      border-radius: 18px;
+      color: #d5dfe8;
+      font-size: 28px;
+      text-align: right;
+      padding: 18px;
+      margin-bottom: 28px;
+      outline: none;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(0, 0, 0, 0.1),
+        0 0 30px rgba(120, 180, 220, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    #display:focus {
+      border-color: rgba(200, 210, 230, 0.25);
+      box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(0, 0, 0, 0.1),
+        0 0 40px rgba(120, 180, 220, 0.1);
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 16px;
+      font-size: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-weight: 600;
+      color: #e0e8f5;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+      border-radius: 14px;
+      pointer-events: none;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.11);
+    }
+
+    .btn-op {
+      background: rgba(140, 170, 210, 0.12);
+      color: #d5dfe8;
+      border: 1px solid rgba(140, 170, 210, 0.2);
+      box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-op:hover {
+      background: rgba(140, 170, 210, 0.18);
+    }
+
+    .btn-clear {
+      background: rgba(200, 120, 130, 0.15);
+      color: #e8d5d9;
+      border: 1px solid rgba(200, 120, 130, 0.25);
+      box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-clear:hover {
+      background: rgba(200, 120, 130, 0.22);
+    }
+
+    .btn-func {
+      background: rgba(160, 180, 210, 0.1);
+      color: #d5dfe8;
+      font-size: 15px;
+      border: 1px solid rgba(160, 180, 210, 0.15);
+      box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-func:hover {
+      background: rgba(160, 180, 210, 0.16);
+    }
+
+    .btn-equal {
+      background: linear-gradient(135deg, rgba(140, 170, 210, 0.18), rgba(160, 180, 210, 0.14));
+      color: #d5dfe8;
+      grid-column: span 2;
+      font-weight: 700;
+      border: 1px solid rgba(140, 170, 210, 0.25);
+      box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-equal:hover {
+      background: linear-gradient(135deg, rgba(140, 170, 210, 0.25), rgba(160, 180, 210, 0.2));
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #d5dfe8;
+      background: rgba(140, 170, 210, 0.08);
+      padding: 15px;
+      border-radius: 14px;
+      border: 1px solid rgba(140, 170, 210, 0.15);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        0 0 25px rgba(120, 180, 220, 0.04);
+      letter-spacing: 1px;
+      min-height: 45px;
+      transition: all 0.3s ease;
+    }
+
+    .result:empty {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="glass-container">
+    <h1>✨ Calculator</h1>
+
+    <input type="text" id="display" readonly placeholder="0" />
+
+    <div class="btn-grid">
+      <button class="btn" onclick="appendNum('7')">7</button>
+      <button class="btn" onclick="appendNum('8')">8</button>
+      <button class="btn" onclick="appendNum('9')">9</button>
+      <button class="btn-op" onclick="setOperator('/')">÷</button>
+
+      <button class="btn" onclick="appendNum('4')">4</button>
+      <button class="btn" onclick="appendNum('5')">5</button>
+      <button class="btn" onclick="appendNum('6')">6</button>
+      <button class="btn-op" onclick="setOperator('*')">×</button>
+
+      <button class="btn" onclick="appendNum('1')">1</button>
+      <button class="btn" onclick="appendNum('2')">2</button>
+      <button class="btn" onclick="appendNum('3')">3</button>
+      <button class="btn-op" onclick="setOperator('-')">−</button>
+
+      <button class="btn" onclick="appendNum('0')">0</button>
+      <button class="btn" onclick="appendNum('.')">.</button>
+      <button class="btn-op" onclick="setOperator('+')">+</button>
+      <button class="btn-clear" onclick="clearAll()">C</button>
+
+      <button class="btn-func" onclick="calculateFunc('sqrt')">√</button>
+      <button class="btn-func" onclick="calculateFunc('square')">x²</button>
+      <button class="btn-func" onclick="calculateFunc('inverse')">1/x</button>
+      <button class="btn-func" onclick="calculateFunc('log')">log</button>
+
+      <button class="btn-func" onclick="calculateFunc('sin')">sin</button>
+      <button class="btn-func" onclick="calculateFunc('cos')">cos</button>
+      <button class="btn-func" onclick="calculateFunc('tan')">tan</button>
+      <button class="btn-func" onclick="calculateFunc('ln')">ln</button>
+
+      <button class="btn-func" onclick="appendNum(Math.PI)">π</button>
+      <button class="btn-func" onclick="appendNum(Math.E)">e</button>
+      <button class="btn-equal" id="equalsBtn">=</button>
+    </div>
+
+    <div class="result" id="output"></div>
+  </div>
+
+  <script>
+    let num1 = "", num2 = "", operator = "";
+
+    function appendNum(val) {
+      const display = document.getElementById("display");
+      if (operator === "") num1 += val;
+      else num2 += val;
+      display.value = num1 + " " + operator + " " + num2;
+    }
+
+    function setOperator(op) {
+      // Normalize to standard ASCII characters
+      if (op === "×") op = "*";
+      if (op === "÷") op = "/";
+      if (op === "−") op = "-";
+      if (op === "＋") op = "+";
+
+      operator = op;
+      document.getElementById("display").value = num1 + " " + op + " ";
+    }
+
+    function clearAll() {
+      num1 = "";
+      num2 = "";
+      operator = "";
+      document.getElementById("display").value = "";
+      document.getElementById("output").innerText = "";
+    }
+
+    function calculateFunc(func) {
+      const value = parseFloat(num1 || num2 || 0);
+      fetch("CalculatorServlet", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `func=${func}&value=${value}`,
+      })
+        .then((res) => res.text())
+        .then((data) => (document.getElementById("output").innerText = data))
+        .catch(
+          (err) =>
+            (document.getElementById("output").innerText = "Error: " + err)
+        );
+    }
+
+    document.getElementById("equalsBtn").addEventListener("click", () => {
+      if (num1 === "" || num2 === "" || operator === "") {
+        document.getElementById("output").innerText = "⚠️ Invalid input!";
+        return;
+      }
+
+      fetch("CalculatorServlet", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `num1=${encodeURIComponent(num1)}&num2=${encodeURIComponent(
+          num2
+        )}&operator=${encodeURIComponent(operator)}`,
+      })
+        .then((res) => res.text())
+        .then((data) => (document.getElementById("output").innerText = data))
+        .catch(
+          (err) =>
+            (document.getElementById("output").innerText = "Error: " + err)
+        );
+    });
+  </script>
+</body>
+</html>
